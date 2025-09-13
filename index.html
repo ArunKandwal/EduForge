@@ -6,123 +6,13 @@
     <title>AI Course Builder Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+
     <!-- PDF Generation Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG0CsdC3EextQAUrLA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root {
-            --bg-primary: #f1f5f9;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f8fafc;
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
-            --text-tertiary: #64748b;
-            --border-color: #e2e8f0;
-            --accent-color: #2563eb;
-            --accent-text-strong: #2563eb;
-            --input-bg: #f1f1f5;
-            --input-border: #cbd5e1;
-            --shadow-color: rgba(0, 0, 0, 0.15);
-            --scrollbar-thumb: #cbd5e1;
-            --scrollbar-thumb-hover: #94a3b8;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #000000; /* Black */
-            --bg-secondary: #1a1a1a; /* Dark Grey */
-            --bg-tertiary: #111111; /* Near Black */
-            --text-primary: #ffffff; /* White */
-            --text-secondary: #cccccc; /* Light Grey */
-            --text-tertiary: #888888; /* Mid Grey */
-            --border-color: #333333; /* Grey Border */
-            --accent-color: #ffffff; /* White Accent */
-            --accent-text-strong: #ffffff; /* White Accent Text */
-            --input-bg: #222222; /* Input Grey */
-            --input-border: #444444; /* Input Border Grey */
-            --shadow-color: rgba(0, 0, 0, 0.6);
-            --scrollbar-thumb: #444444;
-            --scrollbar-thumb-hover: #666666;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-secondary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spinner { animation: spin 1s linear infinite; }
-
-        .page-content h2 {
-            font-size: 1.75rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem;
-            border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; color: var(--text-primary);
-        }
-        .page-content h3 {
-            font-size: 1.3rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);
-        }
-        .page-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
-        .page-content li { margin-bottom: 0.5rem; }
-        .page-content strong { font-weight: 700; color: var(--accent-text-strong); }
-        .page-content p { margin-bottom: 1rem; line-height: 1.7; }
-        .page-content code { background-color: var(--input-bg); color: var(--accent-text-strong); border-radius: 0.25rem; padding: 0.125rem 0.25rem; font-family: monospace; }
-
-        .blinking-cursor { display: inline-block; width: 8px; height: 1.2em; background-color: var(--accent-color); animation: blink 1s step-end infinite; }
-        @keyframes blink { from, to { background-color: transparent } 50% { background-color: var(--accent-color); } }
-
-        .book-container { perspective: 2000px; }
-        .book {
-            transform-style: preserve-3d;
-            transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
-            box-shadow: 0 25px 50px -12px var(--shadow-color);
-        }
-        .book-page {
-            backface-visibility: hidden; -webkit-backface-visibility: hidden;
-            overflow-y: auto; padding: 2.5rem; 
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-        }
-        .book-page::-webkit-scrollbar { width: 10px; }
-        .book-page::-webkit-scrollbar-track { background: transparent; }
-        .book-page::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 5px; }
-        .book-page::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
-        .page-back { transform: rotateY(180deg); }
-        .is-flipped { transform: rotateY(180deg); }
-        
-        .lesson-item input:checked + a { opacity: 0.6; text-decoration: line-through; }
-        .chat-bubble-user { background-color: #dbeafe; color: #1e40af; }
-        [data-theme="dark"] .chat-bubble-user { background-color: #1e293b; color: #93c5fd; }
-        .chat-bubble-ai { background-color: #e0e7ff; color: #3730a3; }
-        [data-theme="dark"] .chat-bubble-ai { background-color: #334155; color: #e0e7ff; }
-
-        .progress-circle { transform: rotate(-90deg); }
-        .progress-circle-bg { stroke: var(--input-bg); }
-        .progress-circle-fg { stroke: #3b82f6; transition: stroke-dashoffset 0.5s ease-out; }
-        [data-theme="dark"] .progress-circle-fg { stroke: #60a5fa; }
-        .history-item.active { background-color: var(--input-bg); }
-
-        @media print {
-            .bg-gradient-to-br, footer, #back-btn, #assessment-actions, #theme-toggle, #preview-btn, #save-status, #notes-section, #download-pdf-btn, #tutor-section, #example-topics, #history-panel, #history-btn {
-                display: none !important;
-            }
-            body, .book-container { margin: 0 !important; padding: 0 !important; background-color: #ffffff !important; color: #000000 !important; }
-            .book { transform: none !important; box-shadow: none !important; position: static !important; }
-            .book-page {
-                position: static !important;
-                transform: none !important;
-                display: block !important;
-                height: auto !important;
-                overflow: visible !important;
-                border: none !important;
-                box-shadow: none !important;
-                padding: 2rem !important;
-                -webkit-print-color-adjust: exact;
-                color-adjust: exact;
-            }
-            #content-page { page-break-before: always; }
-            .page-content a, .lesson-item { color: inherit !important; text-decoration: none !important; opacity: 1 !important; }
-            .lesson-checkbox { display: none !important; }
-        }
-    </style>
 </head>
 <body class="min-h-screen p-4 sm:p-6 md:p-8">
 
@@ -130,17 +20,17 @@
         <div class="bg-gradient-to-br from-[var(--bg-tertiary)] to-[var(--bg-secondary)] rounded-2xl shadow-xl p-6 md:p-10 border border-[var(--border-color)] relative">
              <div class="absolute top-6 right-6 flex items-center gap-2">
                 <button id="history-btn" class="p-2 rounded-full hover:bg-[var(--input-bg)] transition-colors" title="View Course History">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </button>
                 <button id="download-pdf-btn" class="p-2 rounded-full hover:bg-[var(--input-bg)] transition-colors" title="Download Course as PDF">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 </button>
                  <button id="preview-btn" class="p-2 rounded-full hover:bg-[var(--input-bg)] transition-colors" title="Print or Save as PDF">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                 </button>
                 <button id="theme-toggle" class="p-2 rounded-full hover:bg-[var(--input-bg)] transition-colors" title="Toggle Theme">
-                    <svg id="theme-icon-light" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg id="theme-icon-light" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
             </div>
              <aside id="history-panel" class="hidden absolute top-20 right-6 lg:col-span-1 bg-[var(--bg-secondary)] rounded-2xl shadow-xl p-6 border border-[var(--border-color)] h-auto w-96 z-50" style="max-height: 50vh; overflow-y: auto;">
@@ -158,11 +48,11 @@
                 <textarea id="course-topic" rows="3" class="w-full bg-[var(--input-bg)] border border-[var(--input-border)] text-[var(--text-primary)] text-base rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-[var(--accent-color)] p-4 placeholder-[var(--text-tertiary)] transition-all duration-300"></textarea>
                 <div id="example-topics" class="mt-4 flex flex-wrap items-center justify-center gap-2">
                     <span class="text-sm mr-2">Try:</span>
-                    <button class="example-topic-btn bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2 transition-colors duration-300">Beginner's Guide to Python</button>
-                    <button class="example-topic-btn bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2 transition-colors duration-300">History of Ancient Rome</button>
-                    <button class="example-topic-btn bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2 transition-colors duration-300">Introduction to Quantum Physics</button>
+                    <button class="example-topic-btn bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2">Beginner's Guide to Python</button>
+                    <button class="example-topic-btn bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2">History of Ancient Rome</button>
+                    <button class="example-topic-btn bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2">Introduction to Quantum Physics</button>
                 </div>
-                <button id="generate-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-blue-500/50 dark:focus:ring-gray-500/50 text-white font-semibold rounded-lg text-lg px-5 py-3.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <button id="generate-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-lg px-5 py-3.5 flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.553L16.5 21.75l-.398-1.197a3.375 3.375 0 00-2.455-2.455L12.75 18l1.197-.398a3.375 3.375 0 002.455-2.455l.398-1.197.398 1.197a3.375 3.375 0 002.455 2.455l1.197.398-1.197.398a3.375 3.375 0 00-2.455 2.455z" /></svg>
                     <span>Generate New Course</span>
                 </button>
@@ -173,39 +63,37 @@
             <div id="book" class="book relative w-full h-full">
                 <div id="outline-page" class="book-page page-front absolute w-full h-full rounded-lg">
                     <div id="save-status" class="absolute top-4 right-6 text-sm"></div>
-                    <div id="loader" class="hidden flex flex-col items-center justify-center h-full"><div class="spinner w-12 h-12 rounded-full border-4 border-t-[var(--accent-color)] border-gray-200 dark:border-gray-600 mb-4"></div><p class="text-lg">Generating outline...</p></div>
+                    <div id="loader" class="hidden flex flex-col items-center justify-center h-full"><div class="spinner w-12 h-12 rounded-full border-4 border-t-[var(--accent-color)] border-gray-200 mb-4"></div><p class="text-lg">Generating outline...</p></div>
                     <div id="results" class="page-content"><p class="text-center text-lg h-full flex items-center justify-center">Your generated course outline will appear here. Enter a topic above to begin.</p></div>
                     <div id="error-message" class="hidden text-red-500 text-center"></div>
                 </div>
 
                 <div id="content-page" class="book-page page-back absolute w-full h-full rounded-lg">
-                    <button id="back-btn" class="absolute top-6 left-8 bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2 transition-colors duration-300 z-10">&larr; Return to Outline</button>
-                    <div id="content-loader" class="hidden flex flex-col items-center justify-center h-full"><div class="spinner w-12 h-12 rounded-full border-4 border-t-[var(--accent-color)] border-gray-200 dark:border-gray-600 mb-4"></div><p class="text-lg">Generating lesson content...</p></div>
+                    <button id="back-btn" class="absolute top-6 left-8 bg-[var(--input-bg)] hover:bg-[var(--border-color)] font-semibold rounded-lg text-sm px-4 py-2">&larr; Return to Outline</button>
+                    <div id="content-loader" class="hidden flex flex-col items-center justify-center h-full"><div class="spinner w-12 h-12 rounded-full border-4 border-t-[var(--accent-color)] border-gray-200 mb-4"></div><p class="text-lg">Generating lesson content...</p></div>
                     <div id="content-placeholder" class="text-center text-lg h-full flex items-center justify-center"><p>Lesson content will appear here.</p></div>
                     <div id="content-display" class="page-content pt-12"></div>
-                    
+
+                    <!-- Tutor, Notes, Assessment Sections -->
                     <div id="tutor-section" class="hidden mt-8 pt-6 border-t border-[var(--border-color)]">
                          <div id="tutor-actions" class="flex items-center justify-center">
-                             <button id="tutor-btn" class="bg-purple-100 text-purple-800 dark:bg-gray-700 dark:text-gray-200 hover:bg-purple-200 dark:hover:bg-gray-600 font-semibold rounded-lg px-5 py-2.5 transition-colors">
-                                 <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                                 Ask the AI Tutor
-                             </button>
+                             <button id="tutor-btn" class="bg-purple-100 text-purple-800 font-semibold rounded-lg px-5 py-2.5">Ask the AI Tutor</button>
                          </div>
                          <div id="tutor-chat-box" class="hidden mt-6 max-w-2xl mx-auto">
                             <div id="tutor-chat-history" class="h-64 overflow-y-auto p-4 border border-[var(--border-color)] rounded-lg mb-4 space-y-4"></div>
                             <div class="flex gap-2">
-                               <input type="text" id="tutor-input" class="flex-grow bg-[var(--input-bg)] border border-[var(--input-border)] text-[var(--text-primary)] text-base rounded-lg p-3 placeholder-[var(--text-tertiary)]" placeholder="Ask a follow-up question...">
-                               <button id="tutor-send-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg px-5 py-3 transition-colors">Send</button>
+                               <input type="text" id="tutor-input" class="flex-grow bg-[var(--input-bg)] border border-[var(--input-border)] text-[var(--text-primary)] text-base rounded-lg p-3" placeholder="Ask a follow-up question...">
+                               <button id="tutor-send-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg px-5 py-3">Send</button>
                             </div>
                          </div>
                     </div>
 
                     <div id="notes-section" class="hidden mt-8 pt-6 border-t border-[var(--border-color)]">
                         <div id="notes-actions" class="flex items-center justify-center">
-                            <button id="notes-btn" class="bg-green-100 text-green-800 dark:bg-gray-700 dark:text-gray-200 hover:bg-green-200 dark:hover:bg-gray-600 font-semibold rounded-lg px-5 py-2.5 transition-colors">Generate Study Notes</button>
+                            <button id="notes-btn" class="bg-green-100 text-green-800 font-semibold rounded-lg px-5 py-2.5">Generate Study Notes</button>
                         </div>
                         <div id="notes-loader" class="hidden flex flex-col items-center justify-center text-center mt-6">
-                           <div class="spinner w-8 h-8 rounded-full border-4 border-t-green-500 border-gray-200 dark:border-gray-600 mb-3"></div>
+                           <div class="spinner w-8 h-8 rounded-full border-4 border-t-green-500 border-gray-200 mb-3"></div>
                            <p>Generating notes...</p>
                         </div>
                         <div id="notes-content" class="page-content mt-6"></div>
@@ -213,11 +101,11 @@
 
                     <div id="assessment-section" class="hidden mt-8 pt-6 border-t border-[var(--border-color)]">
                          <div id="assessment-actions" class="flex items-center justify-center gap-4">
-                             <button id="practice-btn" class="bg-blue-100 text-blue-800 dark:bg-gray-700 dark:text-gray-200 hover:bg-blue-200 dark:hover:bg-gray-600 font-semibold rounded-lg px-5 py-2.5 transition-colors">Generate Practice Sheet</button>
-                             <button id="test-btn" class="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 font-semibold rounded-lg px-5 py-2.5 transition-colors">Generate Test Paper</button>
+                             <button id="practice-btn" class="bg-blue-100 text-blue-800 font-semibold rounded-lg px-5 py-2.5">Generate Practice Sheet</button>
+                             <button id="test-btn" class="bg-gray-100 text-gray-800 font-semibold rounded-lg px-5 py-2.5">Generate Test Paper</button>
                          </div>
                          <div id="assessment-loader" class="hidden flex flex-col items-center justify-center text-center mt-6">
-                            <div class="spinner w-8 h-8 rounded-full border-4 border-t-blue-500 border-gray-200 dark:border-gray-600 mb-3"></div>
+                            <div class="spinner w-8 h-8 rounded-full border-4 border-t-blue-500 border-gray-200 mb-3"></div>
                             <p>Generating assessment...</p>
                          </div>
                          <div id="assessment-content" class="page-content mt-6"></div>
@@ -228,548 +116,12 @@
         <footer class="text-center mt-8 text-sm"><p>Powered by Gemini</p></footer>
     </div>
 
-    <!-- Firebase SDK Scripts (Compat version for local file usage) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
-    <script>
-        const { jsPDF } = window.jspdf;
-        // DOM Elements
-        const ui = {
-            themeToggle: document.getElementById('theme-toggle'),
-            themeIconLight: document.getElementById('theme-icon-light'),
-            themeIconDark: document.getElementById('theme-icon-dark'),
-            generateBtn: document.getElementById('generate-btn'),
-            courseTopicInput: document.getElementById('course-topic'),
-            exampleTopicButtons: document.querySelectorAll('.example-topic-btn'),
-            book: document.getElementById('book'),
-            backBtn: document.getElementById('back-btn'),
-            loader: document.getElementById('loader'),
-            resultsContainer: document.getElementById('results'),
-            errorMessage: document.getElementById('error-message'),
-            contentLoader: document.getElementById('content-loader'),
-            contentPlaceholder: document.getElementById('content-placeholder'),
-            contentDisplay: document.getElementById('content-display'),
-            saveStatus: document.getElementById('save-status'),
-            historyBtn: document.getElementById('history-btn'),
-            historyPanel: document.getElementById('history-panel'),
-            historyList: document.getElementById('history-list'),
-            tutorSection: document.getElementById('tutor-section'),
-            tutorBtn: document.getElementById('tutor-btn'),
-            tutorChatBox: document.getElementById('tutor-chat-box'),
-            tutorChatHistory: document.getElementById('tutor-chat-history'),
-            tutorInput: document.getElementById('tutor-input'),
-            tutorSendBtn: document.getElementById('tutor-send-btn'),
-            notesSection: document.getElementById('notes-section'),
-            notesBtn: document.getElementById('notes-btn'),
-            notesLoader: document.getElementById('notes-loader'),
-            notesContent: document.getElementById('notes-content'),
-            assessmentSection: document.getElementById('assessment-section'),
-            assessmentActions: document.getElementById('assessment-actions'),
-            assessmentLoader: document.getElementById('assessment-loader'),
-            assessmentContent: document.getElementById('assessment-content'),
-            practiceBtn: document.getElementById('practice-btn'),
-            testBtn: document.getElementById('test-btn'),
-            previewBtn: document.getElementById('preview-btn'),
-            downloadPdfBtn: document.getElementById('download-pdf-btn'),
-        };
 
-        // App State
-        let db, auth, userId, activeCourseId;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        let currentLessonInfo = { topic: '', title: '', content: '' };
-        let chatHistory = [];
-
-        // --- THEME ---
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                ui.themeIconLight.classList.add('hidden');
-                ui.themeIconDark.classList.remove('hidden');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                ui.themeIconLight.classList.remove('hidden');
-                ui.themeIconDark.classList.add('hidden');
-            }
-        }
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('courseBuilderTheme', newTheme);
-            applyTheme(newTheme);
-        }
-
-        // --- FIREBASE SETUP ---
-        async function initializeFirebase() {
-            try {
-                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                auth = firebase.auth();
-                handleAuthentication();
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                ui.saveStatus.textContent = "Offline Mode";
-            }
-        }
-        function handleAuthentication() {
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    await loadCourseHistory();
-                } else {
-                    try {
-                        await auth.signInAnonymously();
-                    } catch (error) {
-                        console.error("Anonymous sign-in failed:", error);
-                        ui.saveStatus.textContent = "Login Failed";
-                    }
-                }
-            });
-        }
-
-        // --- DATA PERSISTENCE ---
-        async function saveCourseToFirestore(topic, outlineHtml, totalLessons) {
-            if (!userId || !db) return;
-            ui.saveStatus.textContent = 'Saving...';
-            try {
-                const courseRef = await db.collection(`artifacts/${appId}/users/${userId}/courses`).add({
-                    topic,
-                    outlineHtml,
-                    totalLessons,
-                    completedLessons: [],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                activeCourseId = courseRef.id;
-                ui.saveStatus.textContent = 'Saved';
-                await loadCourseHistory();
-            } catch (error) {
-                console.error("Error saving course:", error);
-                ui.saveStatus.textContent = 'Save Failed';
-            }
-        }
-        async function saveProgressToFirestore() {
-            if (!userId || !db || !activeCourseId) return;
-            const completedLessons = Array.from(document.querySelectorAll('.lesson-checkbox:checked'))
-                .map(cb => cb.dataset.lessonTitle);
-            try {
-                const courseRef = db.doc(`artifacts/${appId}/users/${userId}/courses/${activeCourseId}`);
-                await courseRef.update({ completedLessons });
-                ui.saveStatus.textContent = 'Progress Saved';
-                await loadCourseHistory();
-            } catch (error) {
-                console.error("Error saving progress:", error);
-                ui.saveStatus.textContent = 'Progress Save Failed';
-            }
-        }
-        async function loadCourseHistory() {
-            if (!userId || !db) return;
-            ui.historyList.innerHTML = `<div class="text-center p-4">Loading history...</div>`;
-            try {
-                const querySnapshot = await db.collection(`artifacts/${appId}/users/${userId}/courses`)
-                                              .orderBy("createdAt", "desc")
-                                              .get();
-                
-                if (querySnapshot.empty) {
-                    ui.historyList.innerHTML = `<p class="text-center text-lg p-8">Your saved courses will appear here.</p>`;
-                    return;
-                }
-
-                ui.historyList.innerHTML = '';
-                let isFirstCourse = true;
-                querySnapshot.forEach(docSnap => {
-                    const course = docSnap.data();
-                    const courseId = docSnap.id;
-                    
-                    const completedCount = course.completedLessons ? course.completedLessons.length : 0;
-                    const totalCount = course.totalLessons || 0;
-                    const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
-                    
-                    const historyItem = document.createElement('div');
-                    historyItem.className = `history-item p-4 rounded-lg cursor-pointer hover:bg-[var(--input-bg)] transition-colors`;
-                    historyItem.dataset.courseId = courseId;
-                    
-                    const radius = 16;
-                    const circumference = 2 * Math.PI * radius;
-                    const offset = circumference - (progress / 100) * circumference;
-
-                    historyItem.innerHTML = `
-                        <h3 class="font-bold text-[var(--text-primary)] truncate">${course.topic}</h3>
-                        <div class="flex items-center gap-3 mt-2">
-                            <svg class="progress-circle w-10 h-10" viewBox="0 0 36 36">
-                                <circle class="progress-circle-bg" cx="18" cy="18" r="${radius}" fill="none" stroke-width="3"></circle>
-                                <circle class="progress-circle-fg" cx="18" cy="18" r="${radius}" fill="none" stroke-width="3" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
-                            </svg>
-                            <span class="text-sm font-semibold text-[var(--text-tertiary)]">${completedCount} / ${totalCount} lessons</span>
-                        </div>
-                    `;
-                    historyItem.addEventListener('click', () => loadSpecificCourse(courseId));
-                    ui.historyList.appendChild(historyItem);
-                    
-                    if (isFirstCourse) {
-                        loadSpecificCourse(courseId);
-                        isFirstCourse = false;
-                    }
-                });
-            } catch (error) {
-                console.error("Error loading course history:", error);
-                ui.historyList.innerHTML = `<p class="text-red-500 text-center">Failed to load history.</p>`;
-            }
-        }
-        async function loadSpecificCourse(courseId) {
-            if (!userId || !db) return;
-            activeCourseId = courseId;
-             ui.historyPanel.classList.add('hidden');
-            document.querySelectorAll('.history-item').forEach(item => item.classList.remove('active'));
-            document.querySelector(`.history-item[data-course-id="${courseId}"]`).classList.add('active');
-
-            try {
-                const courseRef = db.doc(`artifacts/${appId}/users/${userId}/courses/${courseId}`);
-                const docSnap = await courseRef.get();
-                if (docSnap.exists) {
-                    const data = docSnap.data();
-                    ui.courseTopicInput.value = data.topic || '';
-                    ui.resultsContainer.innerHTML = data.outlineHtml || '';
-                    applyProgress(data.completedLessons || []);
-                    if (ui.book.classList.contains('is-flipped')) {
-                        ui.book.classList.remove('is-flipped');
-                    }
-                }
-            } catch (error) {
-                console.error("Error loading specific course:", error);
-            }
-        }
-
-        // --- UI & EVENT LISTENERS ---
-        ui.generateBtn.addEventListener('click', handleGenerateCourse);
-        ui.backBtn.addEventListener('click', () => ui.book.classList.remove('is-flipped'));
-        ui.themeToggle.addEventListener('click', toggleTheme);
-        ui.exampleTopicButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                ui.courseTopicInput.value = btn.textContent;
-                handleGenerateCourse();
-            });
-        });
-        ui.resultsContainer.addEventListener('change', (e) => {
-            if (e.target.classList.contains('lesson-checkbox')) {
-                saveProgressToFirestore();
-            }
-        });
-        ui.historyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            ui.historyPanel.classList.toggle('hidden');
-        });
-        document.addEventListener('click', (e) => {
-            if (!ui.historyPanel.contains(e.target) && !ui.historyBtn.contains(e.target)) {
-                 ui.historyPanel.classList.add('hidden');
-            }
-        });
-        ui.tutorBtn.addEventListener('click', () => ui.tutorChatBox.classList.toggle('hidden'));
-        ui.tutorSendBtn.addEventListener('click', handleTutorChat);
-        ui.tutorInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleTutorChat(); });
-        ui.notesBtn.addEventListener('click', handleGenerateNotes);
-        ui.practiceBtn.addEventListener('click', () => handleGenerateAssessment('practice'));
-        ui.testBtn.addEventListener('click', () => handleGenerateAssessment('test'));
-        ui.previewBtn.addEventListener('click', () => window.print());
-        ui.downloadPdfBtn.addEventListener('click', handleDownloadPdf);
-
-        // --- CORE LOGIC ---
-        function applyProgress(completedLessons) {
-            document.querySelectorAll('.lesson-checkbox').forEach(checkbox => {
-                checkbox.checked = completedLessons.includes(checkbox.dataset.lessonTitle);
-            });
-        }
-        function parseMarkdown(text) {
-             return text.replace(/^### (.*$)/gim, '<h3>$1</h3>').replace(/^## (.*$)/gim, '<h2>$1</h2>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/^[\*\-]\s(.*$)/gim, '<li class="ml-4">$1</li>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-        }
-        function parseMarkdownForOutline(text) {
-             let html = text.replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold mt-4 mb-2">$1</h3>').replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-6 mb-3 pb-2 border-b border-[var(--border-color)]">$1</h2>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-             html = html.replace(/^[\*\-]\s(.*$)/gim, `<li class="lesson-item"><div class="flex items-center gap-3"><input type="checkbox" class="lesson-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" data-lesson-title="$1"><a href="#" class="lesson-link block p-2.5 rounded-md hover:bg-[var(--input-bg)] transition-colors duration-200 flex-grow" onclick="window.handleGenerateLessonContent(event, this)" data-lesson-title="$1">$1</a></div></li>`);
-             return `<ul class="space-y-1">${html}</ul>`;
-        }
-
-        async function callGeminiAPIStream(userPrompt, systemPrompt, onChunk, onComplete, history = []) {
-            const apiKey = "AIzaSyDwZhCINhotsQZCrQ8NSQeSju8J9WvCjaE";
-            
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:streamGenerateContent?alt=sse&key=${apiKey}`;
-            const contents = [...history, { role: "user", parts: [{ text: userPrompt }] }];
-            const payload = { contents, systemInstruction: { parts: [{ text: systemPrompt }] } };
-
-            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-            let fullResponseText = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop(); 
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        try {
-                            const data = JSON.parse(line.substring(6));
-                            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                            if (text) {
-                                fullResponseText += text;
-                                onChunk(text);
-                            }
-                        } catch (e) { console.warn("Could not parse JSON chunk:", line); }
-                    }
-                }
-            }
-            if(onComplete) onComplete(fullResponseText);
-        }
-
-        async function handleGenerateCourse() {
-            if (ui.book.classList.contains('is-flipped')) ui.book.classList.remove('is-flipped');
-            const topic = ui.courseTopicInput.value.trim();
-            if (!topic) {
-                ui.errorMessage.textContent = 'Please enter a course topic.';
-                ui.errorMessage.classList.remove('hidden');
-                return;
-            }
-            
-            ui.errorMessage.classList.add('hidden');
-            ui.resultsContainer.innerHTML = '';
-            ui.loader.classList.remove('hidden');
-            ui.generateBtn.disabled = true;
-
-            const systemPrompt = `You are an expert instructional designer. Create a comprehensive course outline in Markdown. The structure must include: Course Title, Course Description, Prerequisites, Learning Objectives, and Course Modules. Inside each module, list several lessons using standard bullet points.`;
-            
-            try {
-                let fullText = "";
-                let tempDiv = document.createElement('div');
-                await callGeminiAPIStream(topic, systemPrompt, 
-                (chunk) => {
-                    fullText += chunk;
-                    ui.resultsContainer.innerHTML = parseMarkdownForOutline(fullText);
-                },
-                async (fullResponse) => {
-                    tempDiv.innerHTML = ui.resultsContainer.innerHTML;
-                    const totalLessons = tempDiv.querySelectorAll('.lesson-link').length;
-                    await saveCourseToFirestore(topic, ui.resultsContainer.innerHTML, totalLessons);
-                });
-            } catch (error) {
-                console.error("Outline generation error:", error);
-                ui.errorMessage.textContent = `Failed to generate course outline: ${error.message}. Please check your internet connection and try again.`;
-                ui.errorMessage.classList.remove('hidden');
-            } finally {
-                ui.loader.classList.add('hidden');
-                ui.generateBtn.disabled = false;
-            }
-        }
-        
-        window.handleGenerateLessonContent = async function(event, element) {
-            event.preventDefault();
-            currentLessonInfo.title = element.dataset.lessonTitle;
-            currentLessonInfo.topic = ui.courseTopicInput.value.trim();
-
-            ui.book.classList.add('is-flipped');
-            ui.contentPlaceholder.classList.add('hidden');
-            
-            ui.tutorSection.classList.add('hidden');
-            ui.tutorChatBox.classList.add('hidden');
-            ui.tutorChatHistory.innerHTML = '';
-            chatHistory = [];
-            ui.notesSection.classList.add('hidden');
-            ui.notesContent.innerHTML = '';
-            ui.assessmentSection.classList.add('hidden');
-            ui.assessmentContent.innerHTML = '';
-            ui.contentDisplay.innerHTML = ''; 
-            ui.contentLoader.classList.remove('hidden');
-            
-            const systemPrompt = `You are an expert educator. Generate detailed, engaging lesson content in Markdown. The structure should include an Introduction, Core Concepts, Examples, and a Key Takeaway. Format headings with ## and ###. Use bolding for key terms.`;
-            const userPrompt = `The main course topic is "${currentLessonInfo.topic}". Generate the lesson content for: "${currentLessonInfo.title}".`;
-            
-            const cursor = document.createElement('span');
-            cursor.className = 'blinking-cursor';
-            
-            try {
-                let fullText = "";
-                await callGeminiAPIStream(userPrompt, systemPrompt, 
-                (chunk) => {
-                    if (!ui.contentLoader.classList.contains('hidden')) ui.contentLoader.classList.add('hidden');
-                    fullText += chunk;
-                    ui.contentDisplay.innerHTML = `<div class="page-content pt-12">${parseMarkdown(fullText)}</div>`;
-                    ui.contentDisplay.appendChild(cursor);
-                }, 
-                (fullResponse) => {
-                     currentLessonInfo.content = fullResponse;
-                     ui.tutorSection.classList.remove('hidden');
-                     ui.notesSection.classList.remove('hidden');
-                     ui.assessmentSection.classList.remove('hidden');
-                });
-            } catch (error) {
-                console.error("Lesson content generation error:", error);
-                ui.contentDisplay.innerHTML = `<p class="text-red-500">Error generating lesson content: ${error.message}. Please try again.</p>`;
-            } finally {
-                ui.contentLoader.classList.add('hidden');
-                cursor.remove();
-            }
-        }
-
-        async function handleTutorChat() {
-            const userQuestion = ui.tutorInput.value.trim();
-            if (!userQuestion) return;
-
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'p-3 rounded-lg chat-bubble-user self-end';
-            userMessageDiv.textContent = userQuestion;
-            ui.tutorChatHistory.appendChild(userMessageDiv);
-            ui.tutorInput.value = '';
-            ui.tutorChatHistory.scrollTop = ui.tutorChatHistory.scrollHeight;
-
-            const aiMessageDiv = document.createElement('div');
-            aiMessageDiv.className = 'p-3 rounded-lg chat-bubble-ai self-start';
-            const cursor = document.createElement('span');
-            cursor.className = 'blinking-cursor';
-            aiMessageDiv.appendChild(cursor);
-            ui.tutorChatHistory.appendChild(aiMessageDiv);
-            ui.tutorChatHistory.scrollTop = ui.tutorChatHistory.scrollHeight;
-
-            const systemPrompt = `You are an AI Tutor. The user is currently studying a lesson titled "${currentLessonInfo.title}" on the topic of "${currentLessonInfo.topic}". The full content of the lesson is provided in the history. Your job is to answer the user's questions concisely and helpfully, relating back to the lesson content when possible.`;
-            
-            const fullHistory = [{role: "user", parts: [{text: `Here is the lesson content for context:\n\n${currentLessonInfo.content}`}]}, {role: "model", parts:[{text: "I understand. I'm ready to answer questions about this lesson."}]}, ...chatHistory];
-
-            try {
-                let fullText = "";
-                await callGeminiAPIStream(userQuestion, systemPrompt, 
-                (chunk) => {
-                    fullText += chunk;
-                    aiMessageDiv.innerHTML = parseMarkdown(fullText);
-                    ui.tutorChatHistory.scrollTop = ui.tutorChatHistory.scrollHeight;
-                }, 
-                (fullResponse) => {
-                    chatHistory.push({ role: "user", parts: [{ text: userQuestion }] });
-                    chatHistory.push({ role: "model", parts: [{ text: fullResponse }] });
-                });
-
-            } catch(error) {
-                aiMessageDiv.innerHTML = `<p class="text-red-500">Sorry, I couldn't process that. ${error.message}</p>`;
-            }
-        }
-        
-        async function handleGenerateNotes() {
-            ui.notesContent.innerHTML = '';
-            ui.notesLoader.classList.remove('hidden');
-
-            const systemPrompt = `You are an expert academic assistant. Your task is to summarize a lesson into concise, high-yield study notes. Use bullet points and bold text to highlight key terms, definitions, and concepts. The output should be in Markdown format.`;
-            const userPrompt = `Based on the lesson titled '${currentLessonInfo.title}' from the course '${currentLessonInfo.topic}', please generate study notes.`;
-
-            try {
-                let fullText = "";
-                await callGeminiAPIStream(userPrompt, systemPrompt, (chunk) => {
-                     if (!ui.notesLoader.classList.contains('hidden')) ui.notesLoader.classList.add('hidden');
-                    fullText += chunk;
-                    ui.notesContent.innerHTML = parseMarkdown(fullText);
-                });
-            } catch (error) {
-                 console.error("Notes generation error:", error);
-                 ui.notesContent.innerHTML = `<p class="text-red-500">Error generating notes: ${error.message}. Please try again.</p>`;
-            } finally {
-                ui.notesLoader.classList.add('hidden');
-            }
-        }
-
-        async function handleGenerateAssessment(type) {
-            ui.assessmentContent.innerHTML = '';
-            ui.assessmentLoader.classList.remove('hidden');
-
-            const prompts = {
-                practice: {
-                    system: `You are an expert educator. Based on the lesson titled '${currentLessonInfo.title}' from the course '${currentLessonInfo.topic}', generate a practice sheet. Include 5-7 varied exercises (e.g., fill-in-the-blanks, short answer questions). Provide a detailed answer key at the very end under a '## Answer Key' heading.`,
-                    user: `Generate a practice sheet for the lesson: ${currentLessonInfo.title}`
-                },
-                test: {
-                    system: `You are an expert educator. Based on the lesson titled '${currentLessonInfo.title}' from the course '${currentLessonInfo.topic}', generate a formal test paper. Include 5 multiple-choice questions and 2 short-answer questions. Provide a detailed answer key at the very end under a '## Answer Key' heading.`,
-                    user: `Generate a test paper for the lesson: ${currentLessonInfo.title}`
-                }
-            };
-            const selectedPrompt = prompts[type];
-            
-            try {
-                let fullText = "";
-                await callGeminiAPIStream(selectedPrompt.user, selectedPrompt.system, (chunk) => {
-                     if (!ui.assessmentLoader.classList.contains('hidden')) ui.assessmentLoader.classList.add('hidden');
-                    fullText += chunk;
-                    ui.assessmentContent.innerHTML = parseMarkdown(fullText);
-                });
-            } catch (error) {
-                 console.error("Assessment generation error:", error);
-                 ui.assessmentContent.innerHTML = `<p class="text-red-500">Error generating assessment: ${error.message}. Please try again.</p>`;
-            } finally {
-                ui.assessmentLoader.classList.add('hidden');
-            }
-        }
-
-        async function handleDownloadPdf() {
-            const btn = ui.downloadPdfBtn;
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = `<div class="spinner w-5 h-5 border-2 border-t-transparent rounded-full"></div>`;
-            btn.disabled = true;
-
-            try {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                
-                // Create a temporary, printable clone of the content
-                const createPrintableClone = (element) => {
-                    const clone = element.cloneNode(true);
-                    clone.style.display = 'block';
-                    clone.style.padding = '20mm';
-                    clone.style.width = '210mm'; 
-                    clone.style.height = 'auto';
-                    clone.style.overflow = 'visible';
-                    clone.style.position = 'absolute';
-                    clone.style.left = '-9999px'; 
-                    document.body.appendChild(clone);
-                    return clone;
-                };
-
-                const outlineClone = createPrintableClone(document.getElementById('outline-page'));
-                
-                await pdf.html(outlineClone, {
-                    callback: async (pdf) => {
-                        document.body.removeChild(outlineClone);
-                        const isFlipped = ui.book.classList.contains('is-flipped');
-                        if (isFlipped) {
-                            pdf.addPage();
-                            const contentClone = createPrintableClone(document.getElementById('content-page'));
-                             await pdf.html(contentClone, {
-                                callback: (pdf) => {
-                                    document.body.removeChild(contentClone);
-                                    pdf.save(`${ui.courseTopicInput.value.trim() || 'course'}.pdf`);
-                                },
-                                x:0, y:0
-                            });
-                        } else {
-                           pdf.save(`${ui.courseTopicInput.value.trim() || 'course'}.pdf`);
-                        }
-                    },
-                    x: 0,
-                    y: 0,
-                    html2canvas: { scale: 0.25 }
-                });
-
-            } catch (error) {
-                console.error("Error generating PDF:", error);
-                alert("Could not generate PDF. Please try again.");
-            } finally {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-            }
-        }
-
-
-        // --- INITIALIZE THE APP ---
-        const savedTheme = localStorage.getItem('courseBuilderTheme') || 'light';
-        applyTheme(savedTheme);
-        initializeFirebase();
-    </script>
+    <!-- External JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
-

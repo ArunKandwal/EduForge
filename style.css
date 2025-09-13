@@ -1,0 +1,113 @@
+:root {
+    --bg-primary: #f1f5f9;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --border-color: #e2e8f0;
+    --accent-color: #2563eb;
+    --accent-text-strong: #2563eb;
+    --input-bg: #f1f1f5;
+    --input-border: #cbd5e1;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #111111;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #888888;
+    --border-color: #333333;
+    --accent-color: #ffffff;
+    --accent-text-strong: #ffffff;
+    --input-bg: #222222;
+    --input-border: #444444;
+    --shadow-color: rgba(0, 0, 0, 0.6);
+    --scrollbar-thumb: #444444;
+    --scrollbar-thumb-hover: #666666;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }
+
+.page-content h2 {
+    font-size: 1.75rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; color: var(--text-primary);
+}
+.page-content h3 {
+    font-size: 1.3rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);
+}
+.page-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+.page-content li { margin-bottom: 0.5rem; }
+.page-content strong { font-weight: 700; color: var(--accent-text-strong); }
+.page-content p { margin-bottom: 1rem; line-height: 1.7; }
+.page-content code { background-color: var(--input-bg); color: var(--accent-text-strong); border-radius: 0.25rem; padding: 0.125rem 0.25rem; font-family: monospace; }
+
+.blinking-cursor { display: inline-block; width: 8px; height: 1.2em; background-color: var(--accent-color); animation: blink 1s step-end infinite; }
+@keyframes blink { from, to { background-color: transparent } 50% { background-color: var(--accent-color); } }
+
+.book-container { perspective: 2000px; }
+.book {
+    transform-style: preserve-3d;
+    transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+    box-shadow: 0 25px 50px -12px var(--shadow-color);
+}
+.book-page {
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    overflow-y: auto; padding: 2.5rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+.book-page::-webkit-scrollbar { width: 10px; }
+.book-page::-webkit-scrollbar-track { background: transparent; }
+.book-page::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 5px; }
+.book-page::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+.page-back { transform: rotateY(180deg); }
+.is-flipped { transform: rotateY(180deg); }
+
+.lesson-item input:checked + a { opacity: 0.6; text-decoration: line-through; }
+.chat-bubble-user { background-color: #dbeafe; color: #1e40af; }
+[data-theme="dark"] .chat-bubble-user { background-color: #1e293b; color: #93c5fd; }
+.chat-bubble-ai { background-color: #e0e7ff; color: #3730a3; }
+[data-theme="dark"] .chat-bubble-ai { background-color: #334155; color: #e0e7ff; }
+
+.progress-circle { transform: rotate(-90deg); }
+.progress-circle-bg { stroke: var(--input-bg); }
+.progress-circle-fg { stroke: #3b82f6; transition: stroke-dashoffset 0.5s ease-out; }
+[data-theme="dark"] .progress-circle-fg { stroke: #60a5fa; }
+.history-item.active { background-color: var(--input-bg); }
+
+@media print {
+    .bg-gradient-to-br, footer, #back-btn, #assessment-actions, #theme-toggle, #preview-btn, #save-status, #notes-section, #download-pdf-btn, #tutor-section, #example-topics, #history-panel, #history-btn {
+        display: none !important;
+    }
+    body, .book-container { margin: 0 !important; padding: 0 !important; background-color: #ffffff !important; color: #000000 !important; }
+    .book { transform: none !important; box-shadow: none !important; position: static !important; }
+    .book-page {
+        position: static !important;
+        transform: none !important;
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 2rem !important;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
+    #content-page { page-break-before: always; }
+    .page-content a, .lesson-item { color: inherit !important; text-decoration: none !important; opacity: 1 !important; }
+    .lesson-checkbox { display: none !important; }
+}
